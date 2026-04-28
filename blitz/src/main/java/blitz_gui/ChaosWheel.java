@@ -28,7 +28,7 @@ public class ChaosWheel extends Wheel {
     }
 
     /**
-     * Spins the bad wheel, with an effect based on the number
+     * Spins the chaos wheel, with an effect based on the number
      * spun by spinWheel().
      * @param player - The player that spun the wheel
      * @param menu - main menu; used to display messages

@@ -27,12 +27,14 @@ public class Blitz extends JFrame implements ActionListener {
     
     private JPanel gamePanel = new JPanel(new GridBagLayout()), // JPanels for all GUI elements
                    newGame = new JPanel(new GridBagLayout()),   // each one uses a GridBag layout
-                   mainGame = new JPanel(new GridBagLayout());
+                   mainGame = new JPanel(new GridBagLayout()),
+                   l1,      
+                   l2,  // generic layer Panels to separate groups of UI elements
+                   l3;
     
-    private JButton addPlayer = new JButton("Add PLayer"), // Buttons for all player functions
-                    remPlayer = new JButton("Remove Player"), 
+    private JButton addPlayer = new JButton("<html><div style='text-align: center;'>Add<br>Player</div></html>"), // Buttons for all player functions
+                    remPlayer = new JButton("<html><div style='text-align: center;'>Remove<br>Player</div></html>"), 
                     begin = new JButton("Begin Game"),
-                    stopGame = new JButton("Exit"),
                     spinGoodWheel = new JButton(), // No labels as they are established later
                     spinBadWheel = new JButton(),
                     forfeitTurn = new JButton();
@@ -76,7 +78,7 @@ public class Blitz extends JFrame implements ActionListener {
         buildStartMenu();
         buildMainGame();
         mainGame.setVisible(false); // So the main game menu doesn't overlap the start menu
-
+        
         GridBagConstraints l = new GridBagConstraints();
         l.insets = new Insets(10, 10, 10, 10);
         l.fill = GridBagConstraints.HORIZONTAL;
@@ -94,18 +96,18 @@ public class Blitz extends JFrame implements ActionListener {
      * Contructs the start menu, allowing the addition and
      * removal of players and setting the number of rounds
      */
+    
     private void buildStartMenu() {
         String[] nameListHeading = {"Players"}; // String arrays to store into the table
         String[][] playerNameList = new String[MAX_PLAYERS][1];
+        GridBagConstraints l;
 
-        addPlayer.setPreferredSize(new Dimension(120, 25));
+        addPlayer.setPreferredSize(new Dimension(80, 40));
         addPlayer.addActionListener(this);
-        remPlayer.setPreferredSize(new Dimension(120, 25));
+        remPlayer.setPreferredSize(new Dimension(80, 40));
         remPlayer.addActionListener(this);
         begin.setPreferredSize(new Dimension(120, 25));
         begin.addActionListener(this);
-        stopGame.setPreferredSize(new Dimension(120, 25));
-        stopGame.addActionListener(this);
 
         SpinnerNumberModel m = new SpinnerNumberModel(MIN_ROUNDS, MIN_ROUNDS, MAX_ROUNDS, ROUND_INCREMENT);
         roundSelection = new JSpinner(m);
@@ -116,65 +118,92 @@ public class Blitz extends JFrame implements ActionListener {
         TableColumnModel t = playerTable.getColumnModel();
         t.getColumn(0).setPreferredWidth(150);
 
-        title.setFont(new Font("Comic Sans MS", Font.BOLD, 18));
-        roundTitle.setFont(new Font("Comic Sans MS", Font.PLAIN, 14));
+        title.setFont(new Font("Times New Roman", Font.BOLD, 18));
+        roundTitle.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+
+        // Set layers
+        l1 = new JPanel(new GridBagLayout());   // title
+        l2 = new JPanel(new GridBagLayout());   // settings
+        l3 = new JPanel(new GridBagLayout());   // player list
         
-        GridBagConstraints l = new GridBagConstraints();
-        l.insets = new Insets(15, 10, 15, 10); // Top portion (Title -> Round selector)
-        l.fill = GridBagConstraints.CENTER;
+        // Layers
+        l = new GridBagConstraints();
+        l.insets = new Insets(0, 0, 20, 0);
+        l.fill = GridBagConstraints.NORTH; 
+        l.gridwidth = 2;
         l.gridx = 0;
         l.gridy = 0;
-        newGame.add(title, l);
+        newGame.add(l1, l);
+
         l = new GridBagConstraints();
-        l.insets = new Insets(1, 30, 1, 30);
-        l.fill = GridBagConstraints.CENTER;
+        l.insets = new Insets(0, 0, 0, 20);
+        l.fill = GridBagConstraints.WEST;
         l.gridx = 0;
         l.gridy = 1;
-        newGame.add(addPlayer, l);
+        newGame.add(l2, l);
+
         l = new GridBagConstraints();
-        l.insets = new Insets(1, 30, 3, 30);
+        l.fill = GridBagConstraints.EAST;
+        l.gridx = 1;
+        l.gridy = 1;
+        newGame.add(l3, l);
+
+        // Title
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridx = 0;
+        l.gridy = 0;
+        l1.add(title, l);
+
+        // Round Selection
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridwidth = 2;
+        l.gridx = 0;
+        l.gridy = 0;
+        l2.add(roundTitle, l);
+
+        l = new GridBagConstraints();
+        l.insets = new Insets(0, 0, 15, 0);
         l.fill = GridBagConstraints.CENTER;
+        l.gridwidth = 2;
+        l.gridx = 0;
+        l.gridy = 1;
+        l2.add(roundSelection, l);
+
+        // Buttons
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.HORIZONTAL;
         l.gridx = 0;
         l.gridy = 2;
-        newGame.add(remPlayer, l);
+        l2.add(addPlayer, l);
+
         l = new GridBagConstraints();
-        l.insets = new Insets(2, 30, 1, 30);
-        l.fill = GridBagConstraints.CENTER;
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridx = 1;
+        l.gridy = 2;
+        l2.add(remPlayer, l);
+
+        l = new GridBagConstraints();
+        l.insets = new Insets(15, 0, 0, 0);
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridwidth = 2;
         l.gridx = 0;
         l.gridy = 3;
-        newGame.add(roundTitle, l);
+        l2.add(begin, l);
+        
+        // Player table
         l = new GridBagConstraints();
-        l.insets = new Insets(1, 30, 15, 30);
-        l.fill = GridBagConstraints.CENTER;
+        l.fill = GridBagConstraints.HORIZONTAL;
         l.gridx = 0;
-        l.gridy = 4;
-        newGame.add(roundSelection, l);
+        l.gridy = 2;
+        l3.add(playerTable.getTableHeader(), l);
 
-        l = new GridBagConstraints(); // Middle poriton (Begin and exit buttons)
-        l.insets = new Insets(1, 30, 1, 30);
-        l.fill = GridBagConstraints.CENTER;
-        l.gridx = 0;
-        l.gridy = 5;
-        newGame.add(begin, l);
         l = new GridBagConstraints();
-        l.insets = new Insets(1, 30, 15, 30);
-        l.fill = GridBagConstraints.CENTER;
+        l.fill = GridBagConstraints.HORIZONTAL;
         l.gridx = 0;
-        l.gridy = 6;
-        newGame.add(stopGame, l);
-        l = new GridBagConstraints();
-        l.insets = new Insets(5, 10, 0, 10);
-        l.fill = GridBagConstraints.CENTER;
-        l.gridx = 0;
-        l.gridy = 7;
-
-        newGame.add(playerTable.getTableHeader(), l); // Player table
-        l = new GridBagConstraints();
-        l.insets = new Insets(0, 10, 15, 10);
-        l.fill = GridBagConstraints.CENTER;
-        l.gridx = 0;
-        l.gridy = 8;
-        newGame.add(playerTable, l);
+        l.gridy = 3;
+        l3.add(playerTable, l);
     }
 
     /**
@@ -185,9 +214,7 @@ public class Blitz extends JFrame implements ActionListener {
     private void buildMainGame() {
         String[] nameListHeading = {"Players", "Coins"}; // String arrays to store into the table
         String[][] playerStatList = new String[MAX_PLAYERS][2];
-        JPanel flavorPanel = new JPanel(new GridBagLayout()), // 2 new Panels to separate the titles and buttons
-                buttonPanel = new JPanel(new GridBagLayout());
-        setLayout(new GridBagLayout());
+        GridBagConstraints l;
 
         // Uses the .getCost() function of Wheel to properly display the button text
         spinGoodWheel.setText("Good Wheel ("+goodWheel.getCost()+")");
@@ -207,77 +234,80 @@ public class Blitz extends JFrame implements ActionListener {
         t.getColumn(0).setPreferredWidth(150);
         t.getColumn(1).setPreferredWidth(50);
 
-        flavorText.setFont(new Font("Comic Sans MS", Font.BOLD, 18));
-        currentRound.setFont(new Font("Comic Sans MS", Font.PLAIN, 14));
+        flavorText.setFont(new Font("Times New Roman", Font.BOLD, 18));
+        currentRound.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 
-        GridBagConstraints l = new GridBagConstraints();
-        l.insets = new Insets(0, 0, 20, 0); // adds the new panels to the main game panel
-        l.fill = GridBagConstraints.CENTER;
+        // Set layers
+        l1 = new JPanel(new GridBagLayout());   // flavor text
+        l2 = new JPanel(new GridBagLayout());   // wheels
+        l3 = new JPanel(new GridBagLayout());   // scores
+
+        // Layers
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.NORTH;
+        l.insets = new Insets(0, 0, 20, 0);
+        l.gridwidth = 2;
         l.gridx = 0;
         l.gridy = 0;
-        mainGame.add(flavorPanel, l);
+        mainGame.add(l1, l);
+
         l = new GridBagConstraints();
-        l.insets = new Insets(20, 0, 0, 0);
+        l.fill = GridBagConstraints.WEST;
+        l.insets = new Insets(0, 0, 0, 20);
+        l.gridx = 0;
+        l.gridy = 1;
+        mainGame.add(l2, l);
+
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.EAST;
+        l.gridx = 1;
+        l.gridy = 1;
+        mainGame.add(l3, l);
+
+        // Flavor Text
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridx = 0;
+        l.gridy = 0;
+        l1.add(flavorText, l);
+
+        l = new GridBagConstraints();
         l.fill = GridBagConstraints.CENTER;
         l.gridx = 0;
         l.gridy = 1;
-        mainGame.add(buttonPanel, l);
+        l1.add(currentRound, l);
 
-        l = new GridBagConstraints(); // top portion (Titles for the main game)
-        l.insets = new Insets(5, 0, 5, 0);
-        l.fill = GridBagConstraints.NORTH;
-        l.gridx = 1;
+        // Actions
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridx = 0;
         l.gridy = 0;
-        flavorPanel.add(flavorText, l);
+        l2.add(spinGoodWheel, l);
+
         l = new GridBagConstraints();
-        l.insets = new Insets(5, 0, 0, 0);
-        l.fill = GridBagConstraints.NORTH;
-        l.gridx = 1;
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridx = 0;
         l.gridy = 1;
-        flavorPanel.add(currentRound, l);
+        l2.add(spinBadWheel, l);
 
-        l = new GridBagConstraints(); // middle portion (buttons to press for player action)
-        l.insets = new Insets(0, 20, 50, 15);
+        l = new GridBagConstraints();
         l.fill = GridBagConstraints.HORIZONTAL;
         l.gridx = 0;
         l.gridy = 2;
-        buttonPanel.add(spinGoodWheel, l);
-        l = new GridBagConstraints();
-        l.insets = new Insets(0, 20, 50, 20);
-        l.fill = GridBagConstraints.HORIZONTAL;
-        l.gridx = 1;
-        l.gridy = 2;
-        buttonPanel.add(spinBadWheel, l);
-        l = new GridBagConstraints();
-        l.insets = new Insets(0, 15, 50, 20);
-        l.fill = GridBagConstraints.HORIZONTAL;
-        l.gridx = 2;
-        l.gridy = 2;
-        buttonPanel.add(forfeitTurn, l);
+        l2.add(forfeitTurn, l);
 
-        l = new GridBagConstraints(); // bottom portion (playerCoinTable)
-        l.insets = new Insets(50, 0, 0, 0);
-        l.fill = GridBagConstraints.CENTER;
-        l.gridx = 0;
-        l.gridy = 2;
-        mainGame.add(playerTableCoins.getTableHeader(), l);
+        // Scores
         l = new GridBagConstraints();
-        l.insets = new Insets(0, 0, 15, 0);
-        l.fill = GridBagConstraints.CENTER;
+        l.fill = GridBagConstraints.HORIZONTAL;
         l.gridx = 0;
-        l.gridy = 3;
-        mainGame.add(playerTableCoins, l);
-    }
+        l.gridy = 0;
+        l3.add(playerTableCoins.getTableHeader(), l);
 
-    /**
-     * Constructs all the elements into the main GUI window
-     */
-    private static void buildBaseGUI() {
-        Blitz gameWindow = new Blitz();
-        gameWindow.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        gameWindow.pack();
-        gameWindow.setVisible(true);
-        gameWindow.setLocationRelativeTo(null); // So it always centers on the screen
+        l = new GridBagConstraints();
+        l.fill = GridBagConstraints.HORIZONTAL;
+        l.gridx = 0;
+        l.gridy = 1;
+        l3.add(playerTableCoins, l);
     }
 
     /**
@@ -559,9 +589,6 @@ public class Blitz extends JFrame implements ActionListener {
                 flavorText.setText("Spin a wheel if you dare, "+currentPlayer.getName()+"...");
                 currentRound.setText("Current Round: 1/"+maxRounds);
             }
-        // Operation 4: exiting the game
-        } else if (src == stopGame) {
-            System.exit(0); // If the exit button on the start menu is pressed
         } else {
             // If the op is not any of the above, it's assumed to come from the main game menu
 
@@ -593,26 +620,12 @@ public class Blitz extends JFrame implements ActionListener {
             
             // Logic that runs after any of the main game buttons were pressed
 
-            chaosWheelRest = new Random(); // A number between 1 and the number of players/2 is chosen
-            chaosAdvance = chaosWheelRest.nextInt(numPlayers/2)+1;
+            chaosWheelRest = new Random(); // A number between 1 and 4 is chosen
+            chaosAdvance = chaosWheelRest.nextInt(4)+1;
 
-            /* If the number rolled is the maximum number that can be rolled 
-            (i.e. 2 for a 4 player game, 4 for an 8 player) and the Chaos Wheel
-            is in its resting state, then the Chaos wheel advances its resting state */
-            if (chaosWheel.isExhausted() && chaosAdvance == numPlayers/2) chaosWheel.rest(this);
+            /* If the number rolled is 4 and the Chaos Wheel is in its resting state, then the 
+            Chaos wheel advances its resting state */
+            if (chaosWheel.isExhausted() && chaosAdvance == 4) chaosWheel.rest(this);
         }
-    }
-
-    /**
-     * Runs the executable
-     * @param args - command-line arguments, though it is unused
-     * @see Blitz#buildBaseGUI()
-     */
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                buildBaseGUI();
-            }
-        });
     }
 }
